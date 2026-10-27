@@ -1,0 +1,196 @@
+:root {
+  --bg: #0f1420;
+  --card: #171e2e;
+  --panel: #1d2638;
+  --line: #2b3652;
+  --text: #e6ebf5;
+  --muted: #9aa7c2;
+  --accent: #4da3ff;
+  --ok: #3ddc97;
+  --warn: #ffc857;
+  --bp: #ff4d6d;
+  --cur: rgba(77, 163, 255, .22);
+  --kw: #c792ea;
+  --ty: #ffcb6b;
+  --num: #f78c6c;
+  --fn: #82aaff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.top, main, footer { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.top { padding-top: 28px; padding-bottom: 8px; }
+.top h1 { margin: 0 0 6px; font-size: clamp(1.5rem, 4vw, 2.2rem); }
+.top p { margin: 0; color: var(--muted); max-width: 70ch; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  margin: 18px 0;
+}
+.card h2 { margin: 0 0 12px; font-size: 1.25rem; }
+h3 { margin: 0 0 8px; font-size: .95rem; }
+h3 small { color: var(--muted); font-weight: 400; }
+
+code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+
+/* ---------- Arquitectura ---------- */
+.arch { display: flex; align-items: center; gap: 0; }
+.node {
+  flex: 0 0 auto;
+  width: 190px;
+  text-align: center;
+  padding: 14px 10px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--panel);
+}
+.node b { display: block; font-size: 1.2rem; }
+.node small { color: var(--muted); }
+.node.ide { border-color: var(--accent); }
+.node.jvm { border-color: var(--ok); }
+.node.pulse { animation: pulse .6s ease; }
+@keyframes pulse { 40% { transform: scale(1.05); box-shadow: 0 0 18px rgba(77, 163, 255, .6); } }
+
+.wire { position: relative; flex: 1 1 auto; height: 70px; min-width: 120px; }
+.wire .line {
+  position: absolute; left: 0; right: 0; top: 50%;
+  border-top: 3px dashed var(--line);
+}
+.wire .proto {
+  position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  font-size: .75rem; color: var(--muted); letter-spacing: .1em;
+}
+.packet {
+  position: absolute; top: calc(50% - 14px); left: 0;
+  white-space: nowrap;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: #0b1020;
+  background: var(--accent);
+  opacity: 0;
+}
+.packet.event { background: var(--ok); }
+
+.hint { margin: 14px 0 6px; color: var(--muted); }
+.cmd {
+  margin: 0; padding: 10px 12px; overflow-x: auto;
+  background: #0b101b; border: 1px solid var(--line); border-radius: 8px;
+  font-size: .85rem; color: var(--ty);
+}
+
+.status-row { display: flex; gap: 14px; margin-top: 14px; align-items: flex-start; flex-wrap: wrap; }
+.badge {
+  padding: 4px 12px; border-radius: 999px; font-weight: 700; font-size: .85rem;
+  background: var(--panel); border: 1px solid var(--line); white-space: nowrap;
+}
+.badge.paused { background: rgba(255, 200, 87, .15); border-color: var(--warn); color: var(--warn); }
+.badge.done { background: rgba(61, 220, 151, .15); border-color: var(--ok); color: var(--ok); }
+.log { list-style: none; margin: 0; padding: 0; flex: 1 1 280px; font-size: .82rem; font-family: ui-monospace, Consolas, monospace; min-height: 4.5em; }
+.log li { color: var(--muted); }
+.log li:first-child { color: var(--text); }
+.log .to-jvm { color: var(--accent); }
+.log .to-ide { color: var(--ok); }
+
+/* ---------- Controles ---------- */
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+button {
+  font: inherit; font-size: .9rem; color: var(--text);
+  background: var(--panel); border: 1px solid var(--line);
+  padding: 7px 12px; border-radius: 8px; cursor: pointer;
+}
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: .4; cursor: not-allowed; }
+button.primary { background: var(--accent); color: #07101f; border-color: var(--accent); font-weight: 700; }
+button.on { background: var(--ok); color: #07101f; border-color: var(--ok); font-weight: 700; }
+.speed { color: var(--muted); font-size: .85rem; display: flex; gap: 6px; align-items: center; margin-left: auto; }
+select { font: inherit; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px; }
+
+/* ---------- Demo ---------- */
+.demo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.side { display: flex; flex-direction: column; gap: 10px; }
+
+.code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .88rem; overflow-x: auto; }
+.cl { display: flex; align-items: center; min-height: 1.9em; border-radius: 4px; }
+.cl.cur { background: var(--cur); }
+.cl .bp {
+  flex: 0 0 26px; height: 1.9em; padding: 0; border: 0; background: none; border-radius: 0;
+  position: relative; cursor: pointer;
+}
+.cl .bp::after {
+  content: ""; position: absolute; left: 6px; top: 50%; width: 13px; height: 13px; margin-top: -6.5px;
+  border-radius: 50%; border: 2px solid transparent;
+}
+.cl .bp:hover::after { border-color: rgba(255, 77, 109, .6); }
+.cl.has-bp .bp::after { background: var(--bp); border-color: var(--bp); }
+.cl .arrow { flex: 0 0 18px; color: var(--warn); font-size: .8rem; text-align: center; visibility: hidden; }
+.cl.cur .arrow { visibility: visible; }
+.cl .no { flex: 0 0 26px; color: var(--muted); text-align: right; padding-right: 10px; user-select: none; }
+.cl .src { white-space: pre; }
+.k { color: var(--kw); } .t { color: var(--ty); } .n { color: var(--num); } .f { color: var(--fn); }
+
+.stack { display: flex; flex-direction: column; gap: 4px; min-height: 2.2em; }
+.frame {
+  padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line);
+  font-family: ui-monospace, Consolas, monospace; font-size: .82rem; background: #141b2a;
+  display: flex; justify-content: space-between; gap: 8px;
+}
+.frame .ln { color: var(--muted); }
+.frame.top { border-color: var(--warn); background: rgba(255, 200, 87, .1); }
+.frame.new { animation: slide .45s ease; }
+@keyframes slide { from { opacity: 0; transform: translateY(-12px); } }
+.empty { color: var(--muted); font-size: .85rem; }
+
+.vars { width: 100%; border-collapse: collapse; font-family: ui-monospace, Consolas, monospace; font-size: .85rem; }
+.vars td { padding: 3px 6px; border-bottom: 1px solid var(--line); }
+.vars td:first-child { color: var(--fn); width: 40%; }
+.vars .unset { color: var(--muted); font-style: italic; }
+.vars tr.changed td:last-child { animation: flash 1.1s ease; font-weight: 700; }
+@keyframes flash { 0% { background: rgba(61, 220, 151, .5); } 100% { background: transparent; } }
+
+.console {
+  margin: 0; min-height: 2.4em; padding: 6px 8px; border-radius: 6px;
+  background: #0b101b; color: var(--ok); font-size: .85rem;
+}
+
+.note {
+  margin-top: 14px; padding: 12px 14px; border-radius: 10px;
+  background: rgba(77, 163, 255, .1); border-left: 4px solid var(--accent);
+  min-height: 3.2em;
+}
+
+/* ---------- Texto ---------- */
+.steps { margin: 0 0 16px; padding-left: 1.3em; }
+.steps li { margin: 6px 0; }
+.glossary { border-collapse: collapse; width: 100%; max-width: 640px; }
+.glossary th, .glossary td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.glossary th { color: var(--muted); font-weight: 600; }
+.glossary td:first-child { font-weight: 700; white-space: nowrap; }
+details { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 8px 0; background: var(--panel); }
+summary { cursor: pointer; font-weight: 600; }
+details p { margin: 8px 0 2px; color: var(--muted); }
+footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 10px 16px 30px; }
+
+@media (max-width: 800px) {
+  .demo { grid-template-columns: 1fr; }
+  .node { width: 120px; font-size: .85rem; }
+  .node small { display: none; }
+  .speed { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node.pulse, .frame.new, .vars tr.changed td:last-child { animation: none; }
+}

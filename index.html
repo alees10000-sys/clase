@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cómo funciona un depurador de Java</title>
+  <meta name="description" content="Animación interactiva que explica cómo funciona un Java Debugger: breakpoints, JDWP, pila de llamadas y variables.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Cómo funciona un depurador de Java <span aria-hidden="true">🐞</span></h1>
+    <p>Un depurador deja <strong>parar</strong> tu programa mientras corre, para mirar dentro y avanzar paso a paso.
+       Prueba tú: pon puntos rojos, pulsa <em>Depurar</em> y usa los botones.</p>
+  </header>
+
+  <main>
+    <!-- 1. Arquitectura -->
+    <section class="card" aria-labelledby="h-arq">
+      <h2 id="h-arq">1. Quién habla con quién</h2>
+      <div class="arch">
+        <div class="node ide"><b>IDE</b><small>el depurador<br>(IntelliJ, Eclipse, VS Code)</small></div>
+        <div class="wire" id="wire" aria-hidden="true">
+          <div class="line"></div>
+          <div class="packet" id="packet"></div>
+          <span class="proto">JDWP</span>
+        </div>
+        <div class="node jvm"><b>JVM</b><small>tu programa<br>(<code>Main.class</code>)</small></div>
+      </div>
+      <p class="hint">La JVM se arranca con un «agente» que escucha órdenes:</p>
+      <pre class="cmd"><code>java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005 Main</code></pre>
+      <div class="status-row">
+        <span class="badge" id="status" role="status" aria-live="polite">Sin iniciar</span>
+        <ul class="log" id="log" aria-label="Mensajes entre el IDE y la JVM"></ul>
+      </div>
+    </section>
+
+    <!-- 2. Demo -->
+    <section class="card" aria-labelledby="h-demo">
+      <h2 id="h-demo">2. Depura este programa</h2>
+
+      <div class="controls" role="toolbar" aria-label="Controles del depurador">
+        <button id="b-start" class="primary" title="Arranca la JVM y corre hasta el primer breakpoint">▶ Depurar</button>
+        <button id="b-resume" title="Seguir hasta el siguiente breakpoint ">⏯ Resume</button>
+        <button id="b-over" title="Ejecutar la línea entera">⤼ Step Over</button>
+        <button id="b-into" title="Entrar dentro de la función">⤓ Step Into</button>
+        <button id="b-out" title="Salir de la función actual">⤒ Step Out</button>
+        <button id="b-auto" title="Avanza solo, línea a línea">🎬 Auto</button>
+        <label class="speed">Velocidad
+          <select id="speed">
+            <option value="2600">Lenta</option>
+            <option value="1600" selected>Normal</option>
+            <option value="800">Rápida</option>
+          </select>
+        </label>
+        <button id="b-reset" title="Volver al principio">↺ Reiniciar</button>
+      </div>
+
+      <div class="demo">
+        <div class="panel code-panel">
+          <h3>Código <small>(pulsa el círculo para poner un breakpoint)</small></h3>
+          <div id="code" class="code" role="group" aria-label="Código fuente Java"></div>
+        </div>
+
+        <div class="side">
+          <div class="panel">
+            <h3>Pila de llamadas <small>(call stack)</small></h3>
+            <div id="stack" class="stack" aria-live="polite"></div>
+          </div>
+          <div class="panel">
+            <h3>Variables <small>(de la función de arriba)</small></h3>
+            <table class="vars" id="vars"><tbody></tbody></table>
+          </div>
+          <div class="panel">
+            <h3>Consola</h3>
+            <pre id="console" class="console" aria-live="polite"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="note" id="note" aria-live="polite">
+        Pulsa <b>Depurar</b>. Hay dos breakpoints puestos (líneas 4 y 10). Puedes quitarlos o poner más.
+      </div>
+    </section>
+
+    <!-- 3. Pasos -->
+    <section class="card" aria-labelledby="h-pasos">
+      <h2 id="h-pasos">3. Qué pasa por dentro</h2>
+      <ol class="steps">
+        <li><b>Arranca la JVM en modo depuración.</b> Abre un puerto (5005) y espera al IDE.</li>
+        <li><b>El IDE se conecta.</b> Hablan con el protocolo <abbr title="Java Debug Wire Protocol">JDWP</abbr>.</li>
+        <li><b>El IDE envía los breakpoints.</b> La JVM apunta «para cuando llegues a esta línea».</li>
+        <li><b>El programa corre y llega a un breakpoint.</b> La JVM <em>congela todos los hilos</em> y avisa al IDE.</li>
+        <li><b>El IDE pregunta:</b> «¿qué hay en la pila? ¿cuánto valen las variables?». La JVM responde y lo ves en pantalla.</li>
+        <li><b>Tú eliges:</b> Step Over, Step Into, Step Out o Resume. El IDE manda la orden y vuelve al punto 4.</li>
+      </ol>
+
+      <h3>Los botones, en una frase</h3>
+      <table class="glossary">
+        <thead><tr><th>Botón</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Resume</td><td>Sigue hasta el siguiente breakpoint.</td></tr>
+          <tr><td>Step Over</td><td>Ejecuta la línea entera y para en la siguiente.</td></tr>
+          <tr><td>Step Into</td><td>Si la línea llama a una función, entra en ella.</td></tr>
+          <tr><td>Step Out</td><td>Termina la función actual y vuelve a quien la llamó.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4. Autoevaluación -->
+    <section class="card" aria-labelledby="h-quiz">
+      <h2 id="h-quiz">4. Compruébalo tú</h2>
+      <details>
+        <summary>¿Por qué la pila tiene 3 <code>factorial</code> a la vez?</summary>
+        <p>Porque <code>factorial(3)</code> llama a <code>factorial(2)</code>, y este a <code>factorial(1)</code>. Ninguna ha terminado aún, así que las tres siguen en la pila, cada una con su propia <code>x</code>.</p>
+      </details>
+      <details>
+        <summary>¿Qué diferencia hay entre Step Over y Step Into en la línea 9?</summary>
+        <p>Step Into entra en <code>factorial(x - 1)</code> y ves una función nueva en la pila. Step Over la ejecuta entera y pasas a la línea 10 con <code>p</code> ya calculada.</p>
+      </details>
+      <details>
+        <summary>¿Dónde guarda el depurador los breakpoints?</summary>
+        <p>En la JVM. El IDE los envía por JDWP; la JVM para el programa cuando llega a esa línea.</p>
+      </details>
+      <details>
+        <summary>Reto: ¿cómo verías el valor de <code>p</code> en cada nivel?</summary>
+        <p>Pon un breakpoint en la línea 10 y pulsa Resume. Cada parada es un nivel distinto. Mira también la pila: puedes ver las variables de las funciones de abajo.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer>Hecho con HTML, CSS y JavaScript puros. Sin librerías.</footer>
+  <script src="script.js"></script>
+</body>
+</html>
